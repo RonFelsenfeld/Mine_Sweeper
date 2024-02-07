@@ -1,0 +1,114 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'RUBIK', sans-serif;
+}
+
+table {
+  margin: 30px auto;
+}
+
+.cell {
+  position: relative;
+  text-align: center;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  background-color: gray;
+  /* color: rgba(0, 0, 0, 0); */
+}
+
+.revealed {
+  background-color: transparent;
+  color: rgb(0, 0, 0);
+}
+
+.number {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.hide {
+  display: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(105, 105, 105, 0.7);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s;
+  animation: fade-in 0.5s;
+}
+
+.modal {
+  width: 400px;
+  position: absolute;
+  top: 300px;
+  left: 50%;
+
+  text-align: center;
+  border: 2px solid #000000;
+  border-radius: 11px;
+  padding: 30px 0;
+
+  background-color: rgb(253, 179, 68);
+  transform: translate(-50%, -50%);
+}
+
+.modal-title {
+  font-size: 32px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #333;
+  letter-spacing: 2px;
+
+  margin: auto;
+}
+
+.btn-reset {
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  margin-top: 20px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 11px;
+  box-shadow: 0 2px 5px rgba(119, 119, 119, 0.315);
+
+  background-color: rgb(255, 169, 137);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-reset:hover {
+  background-color: rgb(255, 141, 99);
+  box-shadow: 0 4px 5px rgba(119, 119, 119, 0.315);
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.footer {
+  border-top: 2px solid rgba(121, 121, 121, 0.191);
+  display: flex;
+  justify-content: center;
+}
+
+.copyright {
+  color: blue;
+}

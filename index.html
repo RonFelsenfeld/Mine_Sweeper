@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Mine Sweeper</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/game.css" />
+  </head>
+
+  <body onload="onInit()">
+    <h1 class="main-title">Mine Sweeper</h1>
+
+    <table>
+      <tbody class="game-board"></tbody>
+    </table>
+
+    <div class="modal-overlay hide">
+      <div class="modal">
+        <p class="modal-title">Game over!</p>
+        <button class="btn-reset">Play Again</button>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p class="copyright">
+        Copyright &copy; <span class="year">2024</span> Ron Felsenfeld. All
+        rights reserved.
+      </p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+</html>
