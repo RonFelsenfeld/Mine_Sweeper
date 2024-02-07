@@ -16,18 +16,46 @@
   </head>
 
   <body onload="onInit()">
-    <h1 class="main-title">Mine Sweeper</h1>
+    <header>
+      <h1 class="main-title">Mine Sweeper</h1>
+    </header>
 
-    <table>
-      <tbody class="game-board"></tbody>
-    </table>
+    <main class="main-container">
+      <div class="levels-container">
+        <button class="btn-level" data-level="0" onclick="onChangeLevel(this)">
+          Beginner
+        </button>
 
-    <div class="modal-overlay hide">
-      <div class="modal">
-        <p class="modal-title">Game over!</p>
-        <button class="btn-reset">Play Again</button>
+        <button class="btn-level" data-level="1" onclick="onChangeLevel(this)">
+          Medium
+        </button>
+
+        <button class="btn-level" data-level="2" onclick="onChangeLevel(this)">
+          Expert
+        </button>
       </div>
-    </div>
+
+      <div class="lives-continer">
+        <p>❤️</p>
+        <p>❤️</p>
+        <p>❤️</p>
+      </div>
+
+      <div>
+        <span class="emoji" onclick="onRestart()">😁</span>
+      </div>
+
+      <table>
+        <tbody class="game-board"></tbody>
+      </table>
+
+      <div class="modal-overlay hide">
+        <div class="modal">
+          <p class="modal-title">Game over!</p>
+          <button class="btn-reset" onClick="onRestart()">Play Again</button>
+        </div>
+      </div>
+    </main>
 
     <footer class="footer">
       <p class="copyright">

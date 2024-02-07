@@ -5,7 +5,54 @@
 }
 
 body {
+  height: 100vh;
   font-family: 'RUBIK', sans-serif;
+  background: rgb(105, 176, 255);
+  background: linear-gradient(
+    305deg,
+    rgba(105, 176, 255, 1) 50%,
+    rgba(54, 96, 245, 1) 75%
+  );
+  background-repeat: no-repeat;
+}
+
+header {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 64px;
+  text-transform: uppercase;
+  margin: 20px 0;
+}
+
+.main-container {
+  margin-left: 30px;
+}
+
+.btn-level {
+  display: block;
+  width: 200px;
+  font-size: 24px;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: -1px;
+
+  padding: 16px 32px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 30% 30% 40% 0%;
+
+  cursor: pointer;
+  transition: all 0.3s;
+  background-color: rgb(243, 209, 164);
+  box-shadow: -2px 8px 9px 0px rgba(255, 255, 255, 0.251);
+}
+
+.btn-level:hover {
+  background-color: rgb(197, 154, 97);
+  transform: translateX(6px);
+  box-shadow: none;
 }
 
 table {
@@ -13,23 +60,31 @@ table {
 }
 
 .cell {
-  position: relative;
-  text-align: center;
   width: 50px;
   height: 50px;
-  cursor: pointer;
-  background-color: gray;
-  /* color: rgba(0, 0, 0, 0); */
-}
 
-.revealed {
-  background-color: transparent;
-  color: rgb(0, 0, 0);
+  color: rgba(0, 0, 0, 0);
+  text-align: center;
+
+  border: 1px solid black;
+  border-radius: 10% / 30%;
+  background-color: gray;
+
+  cursor: pointer;
 }
 
 .number {
   font-size: 24px;
   font-weight: bold;
+}
+
+.revealed {
+  background-color: rgb(254, 195, 255);
+  color: rgb(0, 0, 0);
+}
+
+.marked {
+  color: rgb(0, 0, 0);
 }
 
 .hide {
