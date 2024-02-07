@@ -20,27 +20,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
-function generateRandomId(length = 6) {
-  var txt = '';
-  var possible =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  for (var i = 0; i < length; i++) {
-    txt += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-
-  return txt;
-}
-
 function playSound(URL) {
   const audio = new Audio(`sound/${URL}`);
   audio.play();
@@ -55,4 +34,9 @@ function renderCell(location, value) {
 function getClassName(location) {
   const cellClass = '.cell-' + location.i + '-' + location.j;
   return cellClass;
+}
+
+function getFormatSeconds(timeDiff) {
+  const seconds = Math.floor(timeDiff / 1000);
+  return (seconds + '').padStart(2, '0');
 }

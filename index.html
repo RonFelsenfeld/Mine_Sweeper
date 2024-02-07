@@ -21,37 +21,92 @@
     </header>
 
     <main class="main-container">
-      <div class="levels-container">
-        <button class="btn-level" data-level="0" onclick="onChangeLevel(this)">
-          Beginner
-        </button>
+      <div class="details-container">
+        <div class="levels-container">
+          <button
+            class="btn-level selected"
+            data-level="0"
+            onclick="onChangeLevel(this)"
+          >
+            Beginner
+          </button>
 
-        <button class="btn-level" data-level="1" onclick="onChangeLevel(this)">
-          Medium
-        </button>
+          <button
+            class="btn-level"
+            data-level="1"
+            onclick="onChangeLevel(this)"
+          >
+            Medium
+          </button>
 
-        <button class="btn-level" data-level="2" onclick="onChangeLevel(this)">
-          Expert
-        </button>
+          <button
+            class="btn-level"
+            data-level="2"
+            onclick="onChangeLevel(this)"
+          >
+            Expert
+          </button>
+        </div>
+
+        <div class="hint-container">
+          <div class="hint-theme">
+            <img
+              src="img/hint.png"
+              alt="lamp img"
+              class="hint-icon"
+              onclick="onHint(this)"
+            />
+          </div>
+          <div class="hint-theme">
+            <img
+              src="img/hint.png"
+              alt="lamp img"
+              class="hint-icon"
+              onclick="onHint(this)"
+            />
+          </div>
+          <div class="hint-theme">
+            <img
+              src="img/hint.png"
+              alt="lamp img"
+              class="hint-icon"
+              onclick="onHint(this)"
+            />
+          </div>
+        </div>
+
+        <div class="best-scores-container">
+          <h2 class="best-title">best scores</h2>
+          <ul class="best-scores">
+            <li class="best-score">Beginner: <span class="score">0</span></li>
+            <li class="best-score">Medium: <span class="score">0</span></li>
+            <li class="best-score">Expert: <span class="score">0</span></li>
+          </ul>
+        </div>
       </div>
 
-      <div class="lives-continer">
-        <p>❤️</p>
-        <p>❤️</p>
-        <p>❤️</p>
+      <div class="game-container">
+        <div class="timer-container">Time: <span class="seconds">00</span></div>
+
+        <table>
+          <tbody class="game-board"></tbody>
+        </table>
       </div>
 
-      <div>
-        <span class="emoji" onclick="onRestart()">😁</span>
-      </div>
+      <div class="icons-container">
+        <div class="emoji-container"></div>
 
-      <table>
-        <tbody class="game-board"></tbody>
-      </table>
+        <div class="lives-container"></div>
+      </div>
 
       <div class="modal-overlay hide">
-        <div class="modal">
+        <div class="modal lose-modal hide">
           <p class="modal-title">Game over!</p>
+          <button class="btn-reset" onClick="onRestart()">Play Again</button>
+        </div>
+
+        <div class="modal win-modal hide">
+          <p class="modal-title">You won!</p>
           <button class="btn-reset" onClick="onRestart()">Play Again</button>
         </div>
       </div>
@@ -65,6 +120,8 @@
     </footer>
 
     <script src="js/utils.js"></script>
+    <script src="js/handlers.js"></script>
+    <script src="js/board.js"></script>
     <script src="js/game.js"></script>
   </body>
 </html>

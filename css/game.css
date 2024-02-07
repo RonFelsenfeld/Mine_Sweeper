@@ -14,7 +14,15 @@ body {
     rgba(54, 96, 245, 1) 75%
   );
   background-repeat: no-repeat;
+  color: #242424;
 }
+
+.main-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+/* ! Header */
 
 header {
   text-align: center;
@@ -26,9 +34,7 @@ header {
   margin: 20px 0;
 }
 
-.main-container {
-  margin-left: 30px;
-}
+/* ! Levels */
 
 .btn-level {
   display: block;
@@ -39,20 +45,38 @@ header {
   letter-spacing: -1px;
 
   padding: 16px 32px;
-  margin-bottom: 12px;
+  margin-bottom: 32px;
   border: none;
   border-radius: 30% 30% 40% 0%;
 
   cursor: pointer;
   transition: all 0.3s;
-  background-color: rgb(243, 209, 164);
-  box-shadow: -2px 8px 9px 0px rgba(255, 255, 255, 0.251);
+  background-color: rgb(199, 161, 111);
+  box-shadow: -2px 8px 9px 0px rgba(137, 137, 137, 0.251);
 }
 
 .btn-level:hover {
   background-color: rgb(197, 154, 97);
   transform: translateX(6px);
   box-shadow: none;
+}
+
+.btn-level.selected {
+  background-color: rgb(214, 214, 214);
+}
+
+/* ! Board + Timer */
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+}
+
+.timer-container {
+  text-align: center;
+
+  font-size: 24px;
 }
 
 table {
@@ -63,23 +87,22 @@ table {
   width: 50px;
   height: 50px;
 
+  font-size: 24px;
+  font-weight: bold;
+
   color: rgba(0, 0, 0, 0);
   text-align: center;
 
   border: 1px solid black;
   border-radius: 10% / 30%;
   background-color: gray;
+  transition: all 0.2s;
 
   cursor: pointer;
 }
 
-.number {
-  font-size: 24px;
-  font-weight: bold;
-}
-
 .revealed {
-  background-color: rgb(254, 195, 255);
+  background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
 }
 
@@ -90,6 +113,28 @@ table {
 .hide {
   display: none;
 }
+
+/* ! Icons  */
+
+.icons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emoji-container {
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.game-emoji,
+.live-icon {
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+
+/* ! Modals */
 
 .modal-overlay {
   position: absolute;
@@ -114,8 +159,25 @@ table {
   border-radius: 11px;
   padding: 30px 0;
 
-  background-color: rgb(253, 179, 68);
   transform: translate(-50%, -50%);
+}
+
+.lose-modal {
+  background: rgb(255, 195, 121);
+  background: linear-gradient(
+    305deg,
+    rgba(255, 195, 121, 1) 25%,
+    rgba(245, 92, 54, 1) 67%
+  );
+}
+
+.win-modal {
+  background: rgb(105, 255, 170);
+  background: radial-gradient(
+    circle,
+    rgba(105, 255, 170, 1) 50%,
+    rgba(116, 245, 54, 1) 75%
+  );
 }
 
 .modal-title {
@@ -138,16 +200,29 @@ table {
   border: none;
   border-radius: 11px;
   box-shadow: 0 2px 5px rgba(119, 119, 119, 0.315);
+  background-color: #e1ef1c;
 
-  background-color: rgb(255, 169, 137);
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .btn-reset:hover {
-  background-color: rgb(255, 141, 99);
-  box-shadow: 0 4px 5px rgba(119, 119, 119, 0.315);
+  box-shadow: 0 4px 5px rgba(72, 72, 72, 0.315);
 }
+
+/* ! Footer */
+
+.footer {
+  border-top: 2px solid rgba(121, 121, 121, 0.191);
+  display: flex;
+  justify-content: center;
+}
+
+.copyright {
+  color: blue;
+}
+
+/* ! Animations */
 
 @keyframes fade-in {
   0% {
@@ -158,12 +233,66 @@ table {
   }
 }
 
-.footer {
-  border-top: 2px solid rgba(121, 121, 121, 0.191);
+.hint-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
+  margin-bottom: 30px;
 }
 
-.copyright {
-  color: blue;
+.hint-theme {
+  display: inline-block;
+  background-color: rgb(255, 255, 149);
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.hint-theme:hover:not(.used) {
+  transform: translateY(-5px);
+  background-color: rgb(247, 247, 72);
+}
+
+.hint-icon {
+  width: 40px;
+}
+
+.hint-theme.used {
+  background: transparent;
+  cursor: not-allowed;
+}
+
+/* ! Best Scores */
+
+.best-scores-container {
+  color: #fff;
+  border-radius: 15px;
+  background-color: rgb(146, 59, 59);
+  padding: 50px 0;
+  box-shadow: 0px 10px 12px rgba(38, 38, 38, 0.725);
+}
+
+.best-title {
+  text-align: center;
+  font-size: 24px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.best-scores {
+  font-size: 18px;
+  font-weight: 400;
+  list-style: none;
+  margin-inline-start: 30px;
+}
+
+.best-score {
+  margin-bottom: 15px;
+}
+
+.score {
+  color: rgb(238, 97, 144);
+  font-size: 20px;
+  font-weight: 700;
+  margin-left: 10px;
 }
