@@ -17,6 +17,12 @@ body {
   color: #242424;
 }
 
+.dark-mode {
+  background: none;
+  background-color: rgb(35, 35, 35);
+  color: rgb(251, 251, 251);
+}
+
 .main-container {
   height: 80vh;
   display: grid;
@@ -42,7 +48,35 @@ header {
   letter-spacing: 11px;
 }
 
+.toggle-theme {
+  position: absolute;
+  top: 2%;
+  right: 2%;
+
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: black;
+  letter-spacing: -0.7px;
+
+  border: 5px ridge black;
+  background-color: white;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggle-mode:hover {
+  background-color: rgb(144, 144, 144);
+}
+
 /* ! Levels */
+
+.btn-actions-container {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 5px;
+}
 
 .btn-manual-mode {
   width: 64px;
@@ -62,10 +96,13 @@ header {
   border: 1px solid black;
   border-radius: 50%;
 
-  box-shadow: 0px 0px 13px 1px rgba(77, 54, 54, 0.822);
-  background-color: #160bb3;
   cursor: pointer;
   transition: all 0.3s;
+}
+
+.btn-manual-mode {
+  box-shadow: 0px 0px 13px 1px rgba(77, 54, 54, 0.822);
+  background-color: #160bb3;
 }
 
 .btn-manual-mode:hover {
@@ -123,7 +160,7 @@ header {
 }
 
 .timer-container {
-  font-size: 40px;
+  font-size: 36px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -155,6 +192,38 @@ table {
   transition: background-color 0.2s;
 }
 
+.revealed.num-1 {
+  color: rgb(12, 12, 140);
+}
+
+.revealed.num-2 {
+  color: rgb(12, 95, 12);
+}
+
+.revealed.num-3 {
+  color: rgb(156, 47, 47);
+}
+
+.revealed.num-4 {
+  color: rgb(176, 132, 50);
+}
+
+.revealed.num-5 {
+  color: rgb(174, 174, 52);
+}
+
+.revealed.num-6 {
+  color: rgb(99, 20, 217);
+}
+
+.revealed.num-7 {
+  color: rgb(235, 122, 255);
+}
+
+.revealed.num-8 {
+  color: rgb(44, 149, 183);
+}
+
 .revealed,
 .mine,
 .marked {
@@ -167,6 +236,11 @@ table {
 
 .mine {
   background-color: rgb(255, 0, 0);
+}
+
+.hint {
+  background-color: rgb(250, 252, 186);
+  animation: flash 1s linear infinite;
 }
 
 .hide {
@@ -190,12 +264,14 @@ table {
   cursor: pointer;
 }
 
+.mega-hint-container,
 .safe-click-container {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.safe-click-btn {
+.btn-mega-hint,
+.btn-safe-click {
   font-size: 22px;
   font-weight: 500;
   font-family: inherit;
@@ -206,19 +282,51 @@ table {
   border-radius: 12px;
   margin-bottom: 5px;
 
-  background-color: rgb(167, 255, 167);
   box-shadow: 5px 5px 12px 1px rgba(0, 0, 0, 0.24);
 
   cursor: pointer;
   transition: all 0.3s;
 }
 
-.safe-click-btn:hover {
+.btn-mega-hint {
+  color: white;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 1) 0%,
+    rgba(255, 154, 0, 1) 10%,
+    rgba(208, 222, 33, 1) 20%,
+    rgba(79, 220, 74, 1) 30%,
+    rgba(63, 218, 216, 1) 40%,
+    rgba(47, 201, 226, 1) 50%,
+    rgba(28, 127, 238, 1) 60%,
+    rgba(95, 21, 242, 1) 70%,
+    rgba(186, 12, 248, 1) 80%,
+    rgba(251, 7, 217, 1) 90%,
+    rgba(255, 0, 0, 1) 100%
+  );
+
+  opacity: 0.5;
+}
+
+.btn-mega-hint.clicked {
+  opacity: 1;
+  transform: scale(1.2) translateY(-15px);
+}
+
+.btn-mega-hint + .click-description {
+  font-size: 14px;
+}
+
+.bt .btn-safe-click {
+  background-color: rgb(167, 255, 167);
+}
+
+.btn-safe-click:hover {
   background-color: rgb(91, 235, 91);
   box-shadow: none;
 }
 
-.safe-click-btn:active {
+.btn-safe-click:active {
   background-color: rgb(13, 87, 13);
   box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
   transform: translateY(4px);
@@ -237,6 +345,10 @@ table {
 .clicks {
   color: rgb(5, 45, 5);
   font-weight: 500;
+}
+
+.dark-mode .clicks {
+  color: rgb(248, 210, 59);
 }
 
 .game-emoji,

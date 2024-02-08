@@ -19,6 +19,81 @@ function buildBoard(SIZE) {
   return board;
 }
 
+function renderBoard(board) {
+  var strHTML = '';
+
+  for (var i = 0; i < board.length; i++) {
+    strHTML += '<tr>';
+
+    for (var j = 0; j < board[0].length; j++) {
+      const cell = board[i][j];
+      var className = `cell cell-${i}-${j} `;
+      var cellContent = MINE;
+
+      if (!cell.isMine) {
+        className += `num-${cell.minesAroundCount}`;
+        cellContent = cell.minesAroundCount ? cell.minesAroundCount : '';
+      }
+
+      // After the first click, the board will render again
+      // therefore, need to reveal the first click cells
+      className += cell.isShown ? ' revealed' : '';
+
+      strHTML += `<td class="${className}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j}, event)">${cellContent}</td>`;
+    }
+
+    strHTML += '</tr>';
+  }
+
+  const elGameBoard = document.querySelector('.game-board');
+  elGameBoard.innerHTML = strHTML;
+}
+
+function finishBuildBoard() {
+  gBoard = placeMines(gLevels[gCurrLevelIdx].MINES);
+  setMinesNegsCount(gBoard);
+  renderBoard(gBoard);
+}
+
+function expandShown(location) {
+  const rowIdx = location.i;
+  const colIdx = location.j;
+
+  // If new location is out of board --> return
+  if (
+    rowIdx < 0 ||
+    rowIdx >= gBoard.length ||
+    colIdx < 0 ||
+    colIdx >= gBoard[0].length
+  )
+    return;
+
+  const cell = gBoard[rowIdx][colIdx];
+
+  // While cell is not a mine and hasn't been revealed
+  if (!cell.isMine && !cell.isShown && !cell.isMarked) {
+    // Update model
+    processClick(cell);
+
+    // Update dom
+    const cellSelector = getClassName({ i: rowIdx, j: colIdx });
+    const elCell = document.querySelector(cellSelector);
+    revealCell(elCell);
+
+    // If reached a cell with mines around --> return
+    if (cell.minesAroundCount) return;
+
+    expandShown({ i: rowIdx + 1, j: colIdx });
+    expandShown({ i: rowIdx - 1, j: colIdx });
+    expandShown({ i: rowIdx, j: colIdx + 1 });
+    expandShown({ i: rowIdx, j: colIdx - 1 });
+    expandShown({ i: rowIdx + 1, j: colIdx + 1 });
+    expandShown({ i: rowIdx + 1, j: colIdx - 1 });
+    expandShown({ i: rowIdx - 1, j: colIdx + 1 });
+    expandShown({ i: rowIdx - 1, j: colIdx - 1 });
+  }
+}
+
 function placeMines(minesCount) {
   while (minesCount > 0) {
     // Get rnd cell with rnd row and col
@@ -35,6 +110,16 @@ function placeMines(minesCount) {
   }
 
   return gBoard;
+}
+
+function placeMineInCell(i, j) {
+  const cell = gBoard[i][j];
+  if (!cell.isMine) {
+    cell.isMine = true;
+    gGame.manualMode.minesLeft--;
+  }
+
+  return;
 }
 
 // Set all cell negs
@@ -90,4 +175,21 @@ function getRndEmptyPos() {
   const rndIdx = getRandomInt(0, emptyCellsPos.length);
   const rndPos = emptyCellsPos[rndIdx];
   return rndPos;
+}
+
+function revealAllMines() {
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard[0].length; j++) {
+      const cell = gBoard[i][j];
+
+      if (cell.isMine) {
+        const cellSelector = getClassName({ i, j });
+        const elCell = document.querySelector(cellSelector);
+        revealCell(elCell);
+        // Even if the cell has been marked --> show it as mine
+        renderCell({ i, j }, MINE);
+        elCell.style.backgroundColor = 'red';
+      }
+    }
+  }
 }

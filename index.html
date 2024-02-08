@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Mine Sweeper</title>
+    <link rel="icon" href="img/favicon.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,13 +19,19 @@
   <body onload="onInit()">
     <header>
       <h1 class="main-title">Mine Sweeper 💣</h1>
+      <button class="toggle-theme" onclick="onToggleTheme(this)">
+        Light mode
+      </button>
     </header>
 
     <main class="main-container">
       <div class="details-container">
-        <button class="btn-manual-mode" onclick="onManualMode(this)">
-          Manual mode
-        </button>
+        <div class="btn-actions-container">
+          <button class="btn-manual-mode" onclick="onManualMode(this)">
+            Manual mode
+          </button>
+        </div>
+
         <div class="levels-container">
           <button
             class="btn-level selected"
@@ -108,8 +115,15 @@
       <div class="extras-container">
         <div class="emoji-container"><span class="emoji-box"></span></div>
 
+        <div class="mega-hint-container">
+          <button class="btn-mega-hint" onclick="onMegaHint(this)">
+            Mega Hint
+          </button>
+          <p class="click-description">Only 1 use per game!</p>
+        </div>
+
         <div class="safe-click-container">
-          <button class="safe-click-btn" onclick="onSafeClick(this)">
+          <button class="btn-safe-click" onclick="onSafeClick(this)">
             Safe click
           </button>
           <p class="click-description">

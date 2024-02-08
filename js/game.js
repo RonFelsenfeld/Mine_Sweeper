@@ -11,8 +11,8 @@ const MINE = '💣';
 const MARK = '⛳️';
 
 var gBoard;
-const gGame = {};
 var gTimerInterval;
+const gGame = {};
 
 const gLevels = [
   { TITLE: 'Beginner', SIZE: 4, MINES: 2, LIVES: 1 },
@@ -36,12 +36,6 @@ function onInit() {
   renderBestScores();
   renderSafeClicks();
   renderManualMode();
-}
-
-function finishBuildBoard() {
-  gBoard = placeMines(gLevels[gCurrLevelIdx].MINES);
-  setMinesNegsCount(gBoard);
-  renderBoard(gBoard);
 }
 
 function onRestart() {
@@ -70,6 +64,12 @@ function initGameState() {
   gGame.manualMode = {
     isOn: false,
     minesLeft: gLevels[gCurrLevelIdx].MINES,
+  };
+  gGame.megaHint = {
+    isOn: false,
+    uses: 0,
+    pos1: {},
+    pos2: {},
   };
 }
 
@@ -115,9 +115,27 @@ function onCellClicked(elCell, i, j) {
   if (cell.isShown) return;
   if (cell.isMarked) return;
 
+  // If mega hint mode is on
+  if (gGame.megaHint.isOn) {
+    // If the first position is empty --> insert i and j to pos1
+    if (!Object.keys(gGame.megaHint.pos1).length) {
+      gGame.megaHint.pos1.i = i;
+      gGame.megaHint.pos1.j = j;
+      elCell.classList.add('hint');
+      return;
+    } else if (!Object.keys(gGame.megaHint.pos2).length) {
+      // If the second position is empty --> insert i and j to pos2
+      gGame.megaHint.pos2.i = i;
+      gGame.megaHint.pos2.j = j;
+      elCell.classList.add('hint');
+    }
+    handleMegaHint();
+    return;
+  }
+
   // Only if manual mode is on and mines left to place
   if (gGame.manualMode.isOn && gGame.manualMode.minesLeft) {
-    placeMine(i, j);
+    placeMineInCell(i, j);
 
     // If done placing mines --> finish the board
     if (!gGame.manualMode.minesLeft) {
@@ -212,22 +230,29 @@ function onSafeClick(elSafeBtn) {
     elSafeBtn.style.cursor = 'not-allowed';
   }
 
-  const rndEmptyPos = getRndEmptyPos();
-  const cellSelector = getClassName({ i: rndEmptyPos.i, j: rndEmptyPos.j });
-  const elRndCell = document.querySelector(cellSelector);
-  elRndCell.classList.add('flash');
-
+  handleSafeClick();
   renderSafeClicks();
-
-  setTimeout(() => {
-    elRndCell.classList.remove('flash');
-  }, 2500);
 }
 
 function onManualMode(elBtn) {
   onRestart();
   gGame.manualMode.isOn = true;
   renderManualMode();
+}
+
+function onMegaHint(elBtn) {
+  if (gGame.megaHint.uses === 1) return;
+  if (!gGame.isOn) return;
+
+  gGame.megaHint.isOn = true;
+  elBtn.classList.add('clicked');
+}
+
+function onToggleTheme(elBtn) {
+  document.body.classList.toggle('dark-mode');
+  elBtn.innerText = document.body.classList.contains('dark-mode')
+    ? 'Dark mode'
+    : 'Light mode';
 }
 
 ////////////////////////////////////////////////////
@@ -255,35 +280,6 @@ function checkForVictory() {
 
 // ! Rendering
 
-function renderBoard(board) {
-  var strHTML = '';
-
-  for (var i = 0; i < board.length; i++) {
-    strHTML += '<tr>';
-
-    for (var j = 0; j < board[0].length; j++) {
-      const cell = board[i][j];
-      var className = `cell cell-${i}-${j} `;
-      var cellContent = MINE;
-
-      if (!cell.isMine) {
-        cellContent = cell.minesAroundCount ? cell.minesAroundCount : '';
-      }
-
-      // After the first click, the board will render again
-      // therefore, need to reveal the first click cells
-      className += cell.isShown ? ' revealed' : '';
-
-      strHTML += `<td class="${className}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j}, event)">${cellContent}</td>`;
-    }
-
-    strHTML += '</tr>';
-  }
-
-  const elGameBoard = document.querySelector('.game-board');
-  elGameBoard.innerHTML = strHTML;
-}
-
 function renderLives() {
   const lifeRemained = gGame.initialLife - gGame.lifeUsed;
   var strHTML = '';
@@ -294,62 +290,6 @@ function renderLives() {
 
   const elLives = document.querySelector('.lives-container');
   elLives.innerHTML = strHTML;
-}
-
-function expandShown(location) {
-  const rowIdx = location.i;
-  const colIdx = location.j;
-
-  // If new location is out of board --> return
-  if (
-    rowIdx < 0 ||
-    rowIdx >= gBoard.length ||
-    colIdx < 0 ||
-    colIdx >= gBoard[0].length
-  )
-    return;
-
-  const cell = gBoard[rowIdx][colIdx];
-
-  // While cell is not a mine and hasn't been revealed
-  if (!cell.isMine && !cell.isShown && !cell.isMarked) {
-    // Update model
-    processClick(cell);
-
-    // Update dom
-    const cellSelector = getClassName({ i: rowIdx, j: colIdx });
-    const elCell = document.querySelector(cellSelector);
-    revealCell(elCell);
-
-    // If reached a cell with mines around --> return
-    if (cell.minesAroundCount) return;
-
-    expandShown({ i: rowIdx + 1, j: colIdx });
-    expandShown({ i: rowIdx - 1, j: colIdx });
-    expandShown({ i: rowIdx, j: colIdx + 1 });
-    expandShown({ i: rowIdx, j: colIdx - 1 });
-    expandShown({ i: rowIdx + 1, j: colIdx + 1 });
-    expandShown({ i: rowIdx + 1, j: colIdx - 1 });
-    expandShown({ i: rowIdx - 1, j: colIdx + 1 });
-    expandShown({ i: rowIdx - 1, j: colIdx - 1 });
-  }
-}
-
-function revealAllMines() {
-  for (var i = 0; i < gBoard.length; i++) {
-    for (var j = 0; j < gBoard[0].length; j++) {
-      const cell = gBoard[i][j];
-
-      if (cell.isMine) {
-        const cellSelector = getClassName({ i, j });
-        const elCell = document.querySelector(cellSelector);
-        revealCell(elCell);
-        // Even if the cell has been marked --> show it as mine
-        renderCell({ i, j }, MINE);
-        elCell.style.backgroundColor = 'red';
-      }
-    }
-  }
 }
 
 function revealCell(elCell) {
@@ -445,22 +385,3 @@ function stopTimer() {
 function resetTimer() {
   document.querySelector('.seconds').innerText = '00';
 }
-
-////////////////////////////////////////////////////
-
-// function getNumInColor(num) {
-//   // Max 8 neighbors
-//   const colorMap = {
-//     1: 'green',
-//     2: 'yellow',
-//     3: 'orange',
-//     4: 'red',
-//     5: 'purple',
-//     6: 'blue',
-//     7: 'pink',
-//     8: 'lightblue',
-//   };
-
-//   const color = `style="color:${colorMap[num]} ;"`;
-//   return `<span ${color}>${num}</span>`;
-// }

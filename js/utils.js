@@ -20,11 +20,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function playSound(URL) {
-  const audio = new Audio(`sound/${URL}`);
-  audio.play();
-}
-
 function renderCell(location, value) {
   const cellSelector = getClassName(location);
   const elCell = document.querySelector(cellSelector);
@@ -39,4 +34,9 @@ function getClassName(location) {
 function getFormatSeconds(timeDiff) {
   const seconds = Math.floor(timeDiff / 1000);
   return (seconds + '').padStart(2, '0');
+}
+
+function playSound(URL) {
+  const audio = new Audio(`sound/${URL}`);
+  audio.play();
 }
