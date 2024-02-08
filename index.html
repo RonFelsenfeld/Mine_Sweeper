@@ -58,6 +58,37 @@
           </button>
         </div>
 
+        <div class="best-scores-container">
+          <h2 class="best-title">best scores</h2>
+          <ul class="best-scores">
+            <li class="best-score">
+              Beginner: <span class="score-beginner">0</span>
+            </li>
+            <li class="best-score">
+              Medium: <span class="score-medium">0</span>
+            </li>
+            <li class="best-score">
+              Expert: <span class="score-expert">0</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="game-background">
+        <div class="game-container">
+          <p class="timer-container">Time: <span class="seconds">00</span></p>
+
+          <div class="table-container">
+            <table>
+              <tbody class="game-board"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="extras-container">
+        <div class="emoji-container"><span class="emoji-box"></span></div>
+
         <div class="hint-container">
           <div class="hint-theme">
             <img
@@ -84,36 +115,6 @@
             />
           </div>
         </div>
-
-        <div class="best-scores-container">
-          <h2 class="best-title">best scores</h2>
-          <ul class="best-scores">
-            <li class="best-score">
-              Beginner: <span class="score-beginner">0</span>
-            </li>
-            <li class="best-score">
-              Medium: <span class="score-medium">0</span>
-            </li>
-            <li class="best-score">
-              Expert: <span class="score-expert">0</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="game-container">
-        <div class="game-head-container">
-          <p class="timer-container">Time: <span class="seconds">00</span></p>
-          <button class="btn-reset" onClick="onRestart()">Restart</button>
-        </div>
-
-        <table>
-          <tbody class="game-board"></tbody>
-        </table>
-      </div>
-
-      <div class="extras-container">
-        <div class="emoji-container"><span class="emoji-box"></span></div>
 
         <div class="mega-hint-container">
           <button class="btn-mega-hint" onclick="onMegaHint(this)">

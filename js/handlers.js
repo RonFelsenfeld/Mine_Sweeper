@@ -1,5 +1,7 @@
 'use strict';
 
+// Handlers Functions
+
 function handleFirstClick() {
   gGame.isOn = true;
   startTimer();
@@ -16,18 +18,18 @@ function handleClickOnMine(elCell) {
 }
 
 function handleVictory() {
-  // todo - play sound
   gGame.isOn = false;
   setTimeout(showWinModal, 900);
+  setTimeout(playSound, 900, WIN_SOUND);
   renderEmoji(WIN_EMOJI);
   stopTimer();
   updateScoreInStorage();
 }
 
 function handleLose() {
-  // todo - play sound
   gGame.isOn = false;
   setTimeout(showLoseModal, 900);
+  setTimeout(playSound, 900, LOSE_SOUND);
   renderEmoji(LOSE_EMOJI);
   stopTimer();
   revealAllMines();
@@ -98,41 +100,5 @@ function handleMegaHint() {
 
   const elMegaHintBtn = document.querySelector('.btn-mega-hint');
   elMegaHintBtn.classList.remove('clicked');
-  elMegaHintBtn.style.cursor = 'not-allowed';
-}
-
-function renderManualMode() {
-  const elManualBtn = document.querySelector('.btn-manual-mode');
-  if (!gGame.manualMode.minesLeft || !gGame.manualMode.isOn) {
-    elManualBtn.innerText = 'Manual Mode';
-  } else {
-    elManualBtn.innerText = `${gGame.manualMode.minesLeft} Mines Left`;
-  }
-}
-
-function updateScoreInStorage() {
-  const currLevelTitle = gLevels[gCurrLevelIdx].TITLE;
-  const bestScore = localStorage.getItem(currLevelTitle);
-  if (!bestScore) {
-    localStorage.setItem(currLevelTitle, gGame.secsPassed);
-  } else {
-    const newBestScore =
-      gGame.secsPassed < bestScore ? gGame.secsPassed : bestScore;
-    localStorage.setItem(currLevelTitle, newBestScore);
-  }
-}
-
-function renderBestScores() {
-  const elBeginnerScore = document.querySelector('.score-beginner');
-  const elMediumScore = document.querySelector('.score-medium');
-  const elExpertScore = document.querySelector('.score-expert');
-  const secondsStr = 's';
-
-  const beginnerScore = localStorage.getItem('Beginner') || 0;
-  const mediumScore = localStorage.getItem('Medium') || 0;
-  const expertScore = localStorage.getItem('Expert') || 0;
-
-  elBeginnerScore.innerText = beginnerScore + secondsStr;
-  elMediumScore.innerText = mediumScore + secondsStr;
-  elExpertScore.innerText = expertScore + secondsStr;
+  elMegaHintBtn.classList.add('used');
 }

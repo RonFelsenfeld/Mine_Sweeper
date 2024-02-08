@@ -7,8 +7,16 @@ const LOSE_EMOJI =
 const WIN_EMOJI =
   '<img class="game-emoji" src="img/sunglass-emoji.png" alt="emoji" onclick="onRestart()"/>';
 
+const WIN_SOUND = 'win.mp3';
+const LOSE_SOUND = 'lose.mp3';
+const EXPLOSION_SOUND = 'explosion.mp3';
+const HINT_SOUND = 'hint.mp3';
+const MEGA_HINT_SOUND = 'mega-hint.mp3';
+
 const MINE = '💣';
 const MARK = '⛳️';
+
+////////////////////////////////////////////////////
 
 var gBoard;
 var gTimerInterval;
@@ -22,8 +30,6 @@ const gLevels = [
 var gCurrLevelIdx = 0;
 
 ////////////////////////////////////////////////////
-
-// ! Main Functions
 
 function onInit() {
   initGameState();
@@ -178,6 +184,7 @@ function onCellClicked(elCell, i, j) {
   }
 
   if (cell.isMine) {
+    playSound(EXPLOSION_SOUND);
     handleClickOnMine(elCell);
 
     if (isOutOfLives()) {
@@ -216,10 +223,12 @@ function onChangeLevel(elLevelBtn) {
 function onHint(elHint) {
   if (gGame.hintsUsed === 3) return;
   if (!gGame.isOn) return;
+  if (gGame.megaHint.isOn) return;
 
   const elHintTheme = elHint.closest('.hint-theme');
   elHintTheme.classList.add('used');
   gGame.inHintMode = true;
+  playSound(HINT_SOUND);
 }
 
 function onSafeClick(elSafeBtn) {
@@ -243,9 +252,12 @@ function onManualMode(elBtn) {
 function onMegaHint(elBtn) {
   if (gGame.megaHint.uses === 1) return;
   if (!gGame.isOn) return;
+  if (gGame.inHintMode) return;
 
   gGame.megaHint.isOn = true;
   elBtn.classList.add('clicked');
+  // TODO - FIX
+  playSound(MEGA_HINT_SOUND);
 }
 
 function onToggleTheme(elBtn) {
@@ -278,7 +290,7 @@ function checkForVictory() {
 
 ////////////////////////////////////////////////////
 
-// ! Rendering
+// ! Render functions
 
 function renderLives() {
   const lifeRemained = gGame.initialLife - gGame.lifeUsed;
@@ -338,10 +350,35 @@ function resetHints() {
   for (var i = 0; i < elHints.length; i++) {
     elHints[i].classList.remove('used');
   }
+  document.querySelector('.btn-mega-hint').classList.remove('used');
 }
 
 function renderSafeClicks() {
   document.querySelector('.clicks').innerText = 3 - gGame.safeClicksUsed;
+}
+
+function renderManualMode() {
+  const elManualBtn = document.querySelector('.btn-manual-mode');
+  if (!gGame.manualMode.minesLeft || !gGame.manualMode.isOn) {
+    elManualBtn.innerText = 'Manual Mode';
+  } else {
+    elManualBtn.innerText = `${gGame.manualMode.minesLeft} Mines Left`;
+  }
+}
+
+function renderBestScores() {
+  const elBeginnerScore = document.querySelector('.score-beginner');
+  const elMediumScore = document.querySelector('.score-medium');
+  const elExpertScore = document.querySelector('.score-expert');
+  const secondsStr = 's';
+
+  const beginnerScore = localStorage.getItem('Beginner') || 0;
+  const mediumScore = localStorage.getItem('Medium') || 0;
+  const expertScore = localStorage.getItem('Expert') || 0;
+
+  elBeginnerScore.innerText = beginnerScore + secondsStr;
+  elMediumScore.innerText = mediumScore + secondsStr;
+  elExpertScore.innerText = expertScore + secondsStr;
 }
 
 ////////////////////////////////////////////////////
@@ -365,7 +402,7 @@ function processUnmark(cell) {
 
 ////////////////////////////////////////////////////
 
-// ! Timer
+// ! Game extra data
 
 function startTimer() {
   if (gTimerInterval) clearInterval(gTimerInterval);
@@ -384,4 +421,16 @@ function stopTimer() {
 
 function resetTimer() {
   document.querySelector('.seconds').innerText = '00';
+}
+
+function updateScoreInStorage() {
+  const currLevelTitle = gLevels[gCurrLevelIdx].TITLE;
+  const bestScore = localStorage.getItem(currLevelTitle);
+  if (!bestScore) {
+    localStorage.setItem(currLevelTitle, gGame.secsPassed);
+  } else {
+    const newBestScore =
+      gGame.secsPassed < bestScore ? gGame.secsPassed : bestScore;
+    localStorage.setItem(currLevelTitle, newBestScore);
+  }
 }

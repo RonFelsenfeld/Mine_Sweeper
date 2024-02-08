@@ -1,5 +1,7 @@
 'use strict';
 
+// Board Functions
+
 function buildBoard(SIZE) {
   var board = [];
 
