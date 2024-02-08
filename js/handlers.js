@@ -3,7 +3,8 @@
 function handleFirstClick() {
   gGame.isOn = true;
   startTimer();
-  finishBuildBoard();
+
+  if (!gGame.manualMode.isOn) finishBuildBoard();
 }
 
 function handleClickOnMine(elCell) {
@@ -80,5 +81,24 @@ function handleHintMode(location) {
         gGame.inHintMode = false;
       }, 1000);
     }
+  }
+}
+
+function placeMine(i, j) {
+  const cell = gBoard[i][j];
+  if (!cell.isMine) {
+    cell.isMine = true;
+    gGame.manualMode.minesLeft--;
+  }
+
+  return;
+}
+
+function renderManualMode() {
+  const elManualBtn = document.querySelector('.btn-manual-mode');
+  if (!gGame.manualMode.minesLeft || !gGame.manualMode.isOn) {
+    elManualBtn.innerText = 'Manual Mode';
+  } else {
+    elManualBtn.innerText = `${gGame.manualMode.minesLeft} Mines Left`;
   }
 }

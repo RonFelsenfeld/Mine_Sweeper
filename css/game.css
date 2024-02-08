@@ -18,12 +18,15 @@ body {
 }
 
 .main-container {
-  height: 750px;
+  height: 80vh;
   display: grid;
   grid-template-columns: 0.35fr 1fr 0.35fr;
   justify-items: center;
   gap: 15px;
-  margin-bottom: 50px;
+
+  padding: 20px 0 15px;
+  margin-bottom: 5px;
+  background: rgba(92, 92, 92, 0.398);
 }
 
 /* ! Header */
@@ -35,11 +38,45 @@ header {
 .main-title {
   font-size: 64px;
   text-transform: uppercase;
-  margin: 20px 0;
+  margin: 10px 0;
   letter-spacing: 11px;
 }
 
 /* ! Levels */
+
+.btn-manual-mode {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 400;
+  color: #f1f1f1;
+  text-transform: uppercase;
+
+  margin-bottom: 20px;
+  padding: 40px;
+  border: 1px solid black;
+  border-radius: 50%;
+
+  box-shadow: 0px 0px 13px 1px rgba(77, 54, 54, 0.822);
+  background-color: #160bb3;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-manual-mode:hover {
+  box-shadow: 0px 0px 15px 1px rgba(55, 40, 40, 0.902);
+  background-color: #685ef8;
+}
+
+.btn-manual-mode:active {
+  background-color: #49467d;
+  transform: translateY(5px);
+}
 
 .btn-level {
   display: block;
@@ -79,9 +116,10 @@ header {
 }
 
 .game-head-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  margin-bottom: 20px;
 }
 
 .timer-container {
@@ -91,7 +129,8 @@ header {
 }
 
 .game-head-container .btn-reset {
-  background-color: blue;
+  background-color: rgb(237, 237, 237);
+  margin: auto;
 }
 
 table {
@@ -168,6 +207,7 @@ table {
   margin-bottom: 5px;
 
   background-color: rgb(167, 255, 167);
+  box-shadow: 5px 5px 12px 1px rgba(0, 0, 0, 0.24);
 
   cursor: pointer;
   transition: all 0.3s;
@@ -359,7 +399,7 @@ table {
   color: rgb(228, 227, 227);
 }
 
-/* ! Animations */
+/* ! Animations and others */
 
 @keyframes fade-in {
   0% {

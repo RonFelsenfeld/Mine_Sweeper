@@ -34,6 +34,8 @@ function onInit() {
   resetTimer();
   resetHints();
   renderBestScores();
+  renderSafeClicks();
+  renderManualMode();
 }
 
 function finishBuildBoard() {
@@ -65,6 +67,10 @@ function initGameState() {
   gGame.inHintMode = false;
   gGame.hintsUsed = 0;
   gGame.safeClicksUsed = 0;
+  gGame.manualMode = {
+    isOn: false,
+    minesLeft: gLevels[gCurrLevelIdx].MINES,
+  };
 }
 
 ////////////////////////////////////////////////////
@@ -108,6 +114,19 @@ function onCellClicked(elCell, i, j) {
   const cell = gBoard[i][j];
   if (cell.isShown) return;
   if (cell.isMarked) return;
+
+  // Only if manual mode is on and mines left to place
+  if (gGame.manualMode.isOn && gGame.manualMode.minesLeft) {
+    placeMine(i, j);
+
+    // If done placing mines --> finish the board
+    if (!gGame.manualMode.minesLeft) {
+      setMinesNegsCount(gBoard);
+      renderBoard(gBoard);
+    }
+    renderManualMode();
+    return;
+  }
 
   // If !isOn, that means this is the first click
   // Set isOn = true; Finish build the board
@@ -198,11 +217,17 @@ function onSafeClick(elSafeBtn) {
   const elRndCell = document.querySelector(cellSelector);
   elRndCell.classList.add('flash');
 
-  document.querySelector('.clicks').innerText = 3 - gGame.safeClicksUsed;
+  renderSafeClicks();
 
   setTimeout(() => {
     elRndCell.classList.remove('flash');
   }, 2500);
+}
+
+function onManualMode(elBtn) {
+  onRestart();
+  gGame.manualMode.isOn = true;
+  renderManualMode();
 }
 
 ////////////////////////////////////////////////////
@@ -287,7 +312,7 @@ function expandShown(location) {
   const cell = gBoard[rowIdx][colIdx];
 
   // While cell is not a mine and hasn't been revealed
-  if (!cell.isMine && !cell.isShown) {
+  if (!cell.isMine && !cell.isShown && !cell.isMarked) {
     // Update model
     processClick(cell);
 
@@ -373,6 +398,10 @@ function resetHints() {
   for (var i = 0; i < elHints.length; i++) {
     elHints[i].classList.remove('used');
   }
+}
+
+function renderSafeClicks() {
+  document.querySelector('.clicks').innerText = 3 - gGame.safeClicksUsed;
 }
 
 ////////////////////////////////////////////////////
