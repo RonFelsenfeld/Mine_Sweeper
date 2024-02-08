@@ -11,36 +11,29 @@ const MINE = '💣';
 const MARK = '⛳️';
 
 var gBoard;
+const gGame = {};
 var gTimerInterval;
 
 const gLevels = [
-  { SIZE: 4, MINES: 2, LIVES: 1 },
-  { SIZE: 8, MINES: 14, LIVES: 3 },
-  { SIZE: 12, MINES: 32, LIVES: 3 },
+  { TITLE: 'Beginner', SIZE: 4, MINES: 2, LIVES: 1 },
+  { TITLE: 'Medium', SIZE: 8, MINES: 14, LIVES: 3 },
+  { TITLE: 'Expert', SIZE: 12, MINES: 32, LIVES: 5 },
 ];
 var gCurrLevelIdx = 0;
-
-const gGame = {
-  isOn: false,
-  showCount: 0,
-  markedCount: 0,
-  secsPassed: 0,
-  initialLife: gLevels[gCurrLevelIdx].LIVES,
-  lifeUsed: 0,
-  hintsUsed: 0,
-  inHintMode: false,
-};
 
 ////////////////////////////////////////////////////
 
 // ! Main Functions
 
 function onInit() {
+  initGameState();
   gBoard = buildBoard(gLevels[gCurrLevelIdx].SIZE);
   renderBoard(gBoard);
   renderLives();
   renderEmoji(NORMAL_EMOJI);
   resetTimer();
+  resetHints();
+  renderBestScores();
 }
 
 function finishBuildBoard() {
@@ -50,6 +43,19 @@ function finishBuildBoard() {
 }
 
 function onRestart() {
+  if (checkForVictory()) {
+    hideWinModal();
+  } else {
+    hideLoseModal();
+  }
+
+  initGameState();
+  stopTimer();
+  renderEmoji(NORMAL_EMOJI);
+  onInit();
+}
+
+function initGameState() {
   gGame.isOn = false;
   gGame.showCount = 0;
   gGame.markedCount = 0;
@@ -57,11 +63,8 @@ function onRestart() {
   gGame.initialLife = gLevels[gCurrLevelIdx].LIVES;
   gGame.lifeUsed = 0;
   gGame.inHintMode = false;
-
-  stopTimer();
-  hideLoseModal();
-  renderEmoji(NORMAL_EMOJI);
-  onInit();
+  gGame.hintsUsed = 0;
+  gGame.safeClicksUsed = 0;
 }
 
 ////////////////////////////////////////////////////
@@ -78,7 +81,7 @@ function onCellMarked(elCell, i, j, ev) {
 
   if (!cell.isMarked) {
     // Update model
-    markCell(cell);
+    processMark(cell);
 
     // Update dom
     elCell.classList.add('marked');
@@ -90,11 +93,14 @@ function onCellMarked(elCell, i, j, ev) {
     }
   } else {
     // Update model
-    unmarkCell(cell);
+    processUnmark(cell);
 
     // Update dom
     elCell.classList.remove('marked');
-    renderCell({ i, j }, '');
+
+    // After unmark, need to retrieve the previous cell's content
+    const prevContent = cell.isMine ? MINE : cell.minesAroundCount;
+    renderCell({ i, j }, prevContent);
   }
 }
 
@@ -103,6 +109,24 @@ function onCellClicked(elCell, i, j) {
   if (cell.isShown) return;
   if (cell.isMarked) return;
 
+  // If !isOn, that means this is the first click
+  // Set isOn = true; Finish build the board
+  if (!gGame.isOn) {
+    processClick(cell);
+    revealCell(elCell);
+    handleFirstClick();
+
+    if (!cell.minesAroundCount) {
+      // For the recursion to work, I need to undo the model update
+      // The recursion works based on the cell.isShown property
+      cell.isShown = false;
+      gGame.showCount--;
+      expandShown({ i, j });
+    }
+
+    return;
+  }
+
   if (gGame.inHintMode) {
     gGame.hintsUsed++;
     revealCell(elCell);
@@ -110,35 +134,32 @@ function onCellClicked(elCell, i, j) {
     return;
   }
 
-  // Update model
-  handleClick(cell);
-
-  // Update dom
-  revealCell(elCell);
+  if (!cell.minesAroundCount && !cell.isMine) {
+    // If the cell is empty --> shows his negs
+    expandShown({ i, j });
+    return;
+  }
 
   if (cell.isMine) {
     handleClickOnMine(elCell);
 
     if (isOutOfLives()) {
       handleLose();
-      return;
-    }
-  } else {
-    if (!cell.minesAroundCount) {
-      // Only if the cell doesn't have mines around --> shows his negs
-      expandShown({ i, j });
     }
   }
+
+  // Update model
+  processClick(cell);
+
+  // Update dom
+  revealCell(elCell);
+
+  // If the cell is flashing after safe click --> remove the flash indicator
+  if (elCell.classList.contains('flash')) elCell.classList.remove('flash');
 
   if (checkForVictory()) {
     handleVictory();
     return;
-  }
-
-  // If !isOn, that means this is the first click
-  // Set isOn = true; Finish build the board
-  if (!gGame.isOn) {
-    handleFirstClick();
   }
 }
 
@@ -163,6 +184,27 @@ function onHint(elHint) {
   elHintTheme.classList.add('used');
   gGame.inHintMode = true;
 }
+
+function onSafeClick(elSafeBtn) {
+  if (gGame.safeClicksUsed >= 3) return;
+
+  gGame.safeClicksUsed++;
+  if (gGame.safeClicksUsed === 3) {
+    elSafeBtn.style.cursor = 'not-allowed';
+  }
+
+  const rndEmptyPos = getRndEmptyPos();
+  const cellSelector = getClassName({ i: rndEmptyPos.i, j: rndEmptyPos.j });
+  const elRndCell = document.querySelector(cellSelector);
+  elRndCell.classList.add('flash');
+
+  document.querySelector('.clicks').innerText = 3 - gGame.safeClicksUsed;
+
+  setTimeout(() => {
+    elRndCell.classList.remove('flash');
+  }, 2500);
+}
+
 ////////////////////////////////////////////////////
 
 // ! Game State
@@ -201,7 +243,6 @@ function renderBoard(board) {
 
       if (!cell.isMine) {
         cellContent = cell.minesAroundCount ? cell.minesAroundCount : '';
-        // cellContent = getNumInColor(cellContent);
       }
 
       // After the first click, the board will render again
@@ -234,25 +275,38 @@ function expandShown(location) {
   const rowIdx = location.i;
   const colIdx = location.j;
 
-  for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
-    if (i < 0 || i >= gBoard.length) continue;
+  // If new location is out of board --> return
+  if (
+    rowIdx < 0 ||
+    rowIdx >= gBoard.length ||
+    colIdx < 0 ||
+    colIdx >= gBoard[0].length
+  )
+    return;
 
-    for (var j = colIdx - 1; j <= colIdx + 1; j++) {
-      if (j < 0 || j >= gBoard[0].length) continue;
-      if (i === rowIdx && j === colIdx) continue;
+  const cell = gBoard[rowIdx][colIdx];
 
-      // Update model
-      const cell = gBoard[i][j];
-      if (!cell.isShown) {
-        cell.isShown = true;
-        gGame.showCount++;
-      }
+  // While cell is not a mine and hasn't been revealed
+  if (!cell.isMine && !cell.isShown) {
+    // Update model
+    processClick(cell);
 
-      // Update dom
-      const cellSelector = getClassName({ i, j });
-      const elCell = document.querySelector(cellSelector);
-      revealCell(elCell);
-    }
+    // Update dom
+    const cellSelector = getClassName({ i: rowIdx, j: colIdx });
+    const elCell = document.querySelector(cellSelector);
+    revealCell(elCell);
+
+    // If reached a cell with mines around --> return
+    if (cell.minesAroundCount) return;
+
+    expandShown({ i: rowIdx + 1, j: colIdx });
+    expandShown({ i: rowIdx - 1, j: colIdx });
+    expandShown({ i: rowIdx, j: colIdx + 1 });
+    expandShown({ i: rowIdx, j: colIdx - 1 });
+    expandShown({ i: rowIdx + 1, j: colIdx + 1 });
+    expandShown({ i: rowIdx + 1, j: colIdx - 1 });
+    expandShown({ i: rowIdx - 1, j: colIdx + 1 });
+    expandShown({ i: rowIdx - 1, j: colIdx - 1 });
   }
 }
 
@@ -274,11 +328,15 @@ function revealAllMines() {
 }
 
 function revealCell(elCell) {
-  elCell.classList.add('revealed');
+  if (elCell.innerText === MINE) {
+    elCell.classList.add('mine');
+  } else {
+    elCell.classList.add('revealed');
+  }
 }
 
 function renderEmoji(emoji) {
-  const elEmoji = document.querySelector('.emoji-container');
+  const elEmoji = document.querySelector('.emoji-box');
   elEmoji.innerHTML = emoji;
 }
 
@@ -310,16 +368,28 @@ function hideWinModal() {
   elWinModal.classList.add('hide');
 }
 
+function resetHints() {
+  const elHints = document.querySelectorAll('.hint-theme');
+  for (var i = 0; i < elHints.length; i++) {
+    elHints[i].classList.remove('used');
+  }
+}
+
 ////////////////////////////////////////////////////
 
 // ! Model updates
 
-function markCell(cell) {
+function processClick(cell) {
+  cell.isShown = true;
+  gGame.showCount++;
+}
+
+function processMark(cell) {
   cell.isMarked = true;
   gGame.markedCount++;
 }
 
-function unmarkCell(cell) {
+function processUnmark(cell) {
   cell.isMarked = false;
   gGame.markedCount--;
 }
@@ -349,19 +419,19 @@ function resetTimer() {
 
 ////////////////////////////////////////////////////
 
-function getNumInColor(num) {
-  // Max 8 neighbors
-  const colorMap = {
-    1: 'green',
-    2: 'yellow',
-    3: 'orange',
-    4: 'red',
-    5: 'purple',
-    6: 'blue',
-    7: 'pink',
-    8: 'lightblue',
-  };
+// function getNumInColor(num) {
+//   // Max 8 neighbors
+//   const colorMap = {
+//     1: 'green',
+//     2: 'yellow',
+//     3: 'orange',
+//     4: 'red',
+//     5: 'purple',
+//     6: 'blue',
+//     7: 'pink',
+//     8: 'lightblue',
+//   };
 
-  const color = `style="color:${colorMap[num]} ;"`;
-  return `<span ${color}>${num}</span>`;
-}
+//   const color = `style="color:${colorMap[num]} ;"`;
+//   return `<span ${color}>${num}</span>`;
+// }

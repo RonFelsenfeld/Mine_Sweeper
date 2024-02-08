@@ -67,3 +67,27 @@ function countCellMineAround(board, rowIdx, colIdx) {
 
   return mineNegsCount;
 }
+
+// Gets all empty cells
+function getEmptyCellsPos() {
+  const emptyCells = [];
+
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard[0].length; j++) {
+      const cell = gBoard[i][j];
+      if (!cell.isMine && !cell.isShown) emptyCells.push({ i, j });
+    }
+  }
+
+  return emptyCells;
+}
+
+// Get a random empty and unrevealed cell position
+function getRndEmptyPos() {
+  const emptyCellsPos = getEmptyCellsPos();
+  if (!emptyCellsPos) return;
+
+  const rndIdx = getRandomInt(0, emptyCellsPos.length);
+  const rndPos = emptyCellsPos[rndIdx];
+  return rndPos;
+}

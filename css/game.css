@@ -18,8 +18,12 @@ body {
 }
 
 .main-container {
-  display: flex;
-  justify-content: space-around;
+  height: 750px;
+  display: grid;
+  grid-template-columns: 0.35fr 1fr 0.35fr;
+  justify-items: center;
+  gap: 15px;
+  margin-bottom: 50px;
 }
 
 /* ! Header */
@@ -32,6 +36,7 @@ header {
   font-size: 64px;
   text-transform: uppercase;
   margin: 20px 0;
+  letter-spacing: 11px;
 }
 
 /* ! Levels */
@@ -73,14 +78,25 @@ header {
   width: 60%;
 }
 
-.timer-container {
-  text-align: center;
+.game-head-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
-  font-size: 24px;
+.timer-container {
+  font-size: 40px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.game-head-container .btn-reset {
+  background-color: blue;
 }
 
 table {
   margin: 30px auto;
+  background: rgb(248, 244, 237);
 }
 
 .cell {
@@ -96,18 +112,22 @@ table {
   border: 1px solid black;
   border-radius: 10% / 30%;
   background-color: gray;
-  transition: all 0.2s;
-
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.revealed,
+.mine,
+.marked {
+  color: rgb(0, 0, 0);
 }
 
 .revealed {
   background-color: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
 }
 
-.marked {
-  color: rgb(0, 0, 0);
+.mine {
+  background-color: rgb(255, 0, 0);
 }
 
 .hide {
@@ -116,15 +136,67 @@ table {
 
 /* ! Icons  */
 
-.icons-container {
+.extras-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
 }
 
 .emoji-container {
+  background-color: gray;
+  padding: 7px;
+  border: 5px ridge rgb(56, 56, 56);
   margin-bottom: 30px;
   cursor: pointer;
+}
+
+.safe-click-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.safe-click-btn {
+  font-size: 22px;
+  font-weight: 500;
+  font-family: inherit;
+  text-transform: uppercase;
+
+  border: none;
+  padding: 20px 40px;
+  border-radius: 12px;
+  margin-bottom: 5px;
+
+  background-color: rgb(167, 255, 167);
+
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.safe-click-btn:hover {
+  background-color: rgb(91, 235, 91);
+  box-shadow: none;
+}
+
+.safe-click-btn:active {
+  background-color: rgb(13, 87, 13);
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+  transform: translateY(4px);
+}
+
+.flash {
+  background-color: rgb(252, 186, 197);
+  animation: flash 1s linear infinite;
+}
+
+.click-description {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.clicks {
+  color: rgb(5, 45, 5);
+  font-weight: 500;
 }
 
 .game-emoji,
@@ -210,29 +282,6 @@ table {
   box-shadow: 0 4px 5px rgba(72, 72, 72, 0.315);
 }
 
-/* ! Footer */
-
-.footer {
-  border-top: 2px solid rgba(121, 121, 121, 0.191);
-  display: flex;
-  justify-content: center;
-}
-
-.copyright {
-  color: blue;
-}
-
-/* ! Animations */
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
 .hint-container {
   display: flex;
   justify-content: space-evenly;
@@ -290,9 +339,39 @@ table {
   margin-bottom: 15px;
 }
 
-.score {
+.best-score span {
   color: rgb(238, 97, 144);
   font-size: 20px;
   font-weight: 700;
   margin-left: 10px;
+}
+
+/* ! Footer */
+
+.footer {
+  display: flex;
+  justify-content: center;
+}
+
+.copyright {
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  color: rgb(228, 227, 227);
+}
+
+/* ! Animations */
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes flash {
+  50% {
+    opacity: 0;
+  }
 }

@@ -1,10 +1,5 @@
 'use strict';
 
-function handleClick(cell) {
-  gGame.showCount++;
-  cell.isShown = true;
-}
-
 function handleFirstClick() {
   gGame.isOn = true;
   startTimer();
@@ -16,7 +11,6 @@ function handleClickOnMine(elCell) {
   // If it's a mine, we will decrease it back
   gGame.showCount--;
   gGame.lifeUsed++;
-  elCell.style.backgroundColor = 'red';
   renderLives();
 }
 
@@ -26,6 +20,34 @@ function handleVictory() {
   setTimeout(showWinModal, 900);
   renderEmoji(WIN_EMOJI);
   stopTimer();
+  updateScoreInStorage();
+}
+
+function updateScoreInStorage() {
+  const currLevelTitle = gLevels[gCurrLevelIdx].TITLE;
+  const bestScore = localStorage.getItem(currLevelTitle);
+  if (!bestScore) {
+    localStorage.setItem(currLevelTitle, gGame.secsPassed);
+  } else {
+    const newBestScore =
+      gGame.secsPassed < bestScore ? gGame.secsPassed : bestScore;
+    localStorage.setItem(currLevelTitle, newBestScore);
+  }
+}
+
+function renderBestScores() {
+  const elBeginnerScore = document.querySelector('.score-beginner');
+  const elMediumScore = document.querySelector('.score-medium');
+  const elExpertScore = document.querySelector('.score-expert');
+  const secondsStr = 's';
+
+  const beginnerScore = localStorage.getItem('Beginner') || 0;
+  const mediumScore = localStorage.getItem('Medium') || 0;
+  const expertScore = localStorage.getItem('Expert') || 0;
+
+  elBeginnerScore.innerText = beginnerScore + secondsStr;
+  elMediumScore.innerText = mediumScore + secondsStr;
+  elExpertScore.innerText = expertScore + secondsStr;
 }
 
 function handleLose() {
@@ -46,10 +68,15 @@ function handleHintMode(location) {
       const cellSelector = getClassName({ i, j });
       const elCell = document.querySelector(cellSelector);
       const cell = gBoard[i][j];
-      elCell.classList.add('revealed');
+
+      if (cell.isMine) {
+        elCell.classList.add('mine');
+      } else {
+        elCell.classList.add('revealed');
+      }
 
       setTimeout(() => {
-        if (!cell.isShown) elCell.classList.remove('revealed');
+        if (!cell.isShown) elCell.classList.remove('revealed', 'mine');
         gGame.inHintMode = false;
       }, 1000);
     }
