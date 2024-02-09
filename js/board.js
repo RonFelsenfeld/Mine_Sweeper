@@ -169,7 +169,7 @@ function getEmptyCellsPos() {
   return emptyCells;
 }
 
-// Get a random empty and unrevealed cell position
+// Gets a random empty and unrevealed cell position
 function getRndEmptyPos() {
   const emptyCellsPos = getEmptyCellsPos();
   if (!emptyCellsPos) return;
@@ -195,3 +195,55 @@ function revealAllMines() {
     }
   }
 }
+
+// Gets all mines positions
+function getHiddenMinesPos() {
+  const minesPos = [];
+
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard[0].length; j++) {
+      const cell = gBoard[i][j];
+      if (cell.isMine && !cell.isShown) minesPos.push({ i, j });
+    }
+  }
+
+  return minesPos;
+}
+
+// Choose 3 random mines position (Exterminator)
+function getRandomMinesPos(minesPos) {
+  const minesPosCopy = minesPos.slice();
+  const rndMinesPos = [];
+
+  while (rndMinesPos.length !== 3) {
+    const rndIdx = getRandomInt(0, minesPosCopy.length);
+    const rndPos = minesPosCopy[rndIdx];
+    const rndCell = gBoard[rndPos.i][rndPos.j];
+
+    // Only if the mine negs are unshown --> add the mine's position
+    // if (!hasShownNeighbor(rndCell)) {
+    rndMinesPos.push(rndPos);
+
+    // Make sure that the bomb won't get selected twice + rndIdx will be in range
+    minesPosCopy.splice(rndIdx, 1);
+    // }
+  }
+
+  return rndMinesPos;
+}
+
+// // Check if a given cell has shown neighbors (for exterminator)
+// function hasShownNeighbor(rowIdx, colIdx) {
+//   for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+//     if (i < 0 || i >= gBoard.length) continue;
+
+//     for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+//       if (j < 0 || j >= gBoard[0].length) continue;
+//       if (i === rowIdx && j === colIdx) continue;
+
+//       if (gBoard[i][j].isShown) return true;
+//     }
+//   }
+
+//   return false;
+// }

@@ -77,6 +77,7 @@ function initGameState() {
     pos1: {},
     pos2: {},
   };
+  gGame.isUsedExterminator = false;
 }
 
 ////////////////////////////////////////////////////
@@ -221,8 +222,11 @@ function onChangeLevel(elLevelBtn) {
 }
 
 function onHint(elHint) {
+  if (!gGame.isOn) {
+    showHintAlert(elHint.closest('.hint-container'));
+    return;
+  }
   if (gGame.hintsUsed === 3) return;
-  if (!gGame.isOn) return;
   if (gGame.megaHint.isOn) return;
 
   const elHintTheme = elHint.closest('.hint-theme');
@@ -250,13 +254,15 @@ function onManualMode(elBtn) {
 }
 
 function onMegaHint(elBtn) {
+  if (!gGame.isOn) {
+    showHintAlert(elBtn);
+    return;
+  }
   if (gGame.megaHint.uses === 1) return;
-  if (!gGame.isOn) return;
   if (gGame.inHintMode) return;
 
   gGame.megaHint.isOn = true;
   elBtn.classList.add('clicked');
-  // TODO - FIX
   playSound(MEGA_HINT_SOUND);
 }
 
@@ -265,6 +271,20 @@ function onToggleTheme(elBtn) {
   elBtn.innerText = document.body.classList.contains('dark-mode')
     ? 'Dark mode'
     : 'Light mode';
+}
+
+function onExterminator(elBtn) {
+  if (!gGame.isOn) {
+    showHintAlert(elBtn);
+    return;
+  }
+  if (gGame.isUsedExterminator) return;
+  // If on beginner level --> don't allow (exterminator removes 3 mines)
+  if (gCurrLevelIdx === 0) return;
+
+  gGame.isUsedExterminator = true;
+  elBtn.classList.add('used');
+  handleExterminator();
 }
 
 ////////////////////////////////////////////////////
@@ -276,11 +296,15 @@ function isOutOfLives() {
 }
 
 function checkForVictory() {
-  const totalMines = gLevels[gCurrLevelIdx].MINES;
-  const totalMarked = gGame.markedCount;
+  // If the user used the exterminator --> decrease total mines by 3
+  const totalMines = gGame.isUsedExterminator
+    ? gLevels[gCurrLevelIdx].MINES - 3
+    : gLevels[gCurrLevelIdx].MINES;
 
   const totalRevealed = gGame.showCount;
   const totalCellsToReveal = gLevels[gCurrLevelIdx].SIZE ** 2 - totalMines;
+
+  const totalMarked = gGame.markedCount;
 
   const isMarkedAll = totalMarked + gGame.lifeUsed === totalMines;
   const isRevealedAll = totalRevealed === totalCellsToReveal;
@@ -350,7 +374,7 @@ function resetHints() {
   for (var i = 0; i < elHints.length; i++) {
     elHints[i].classList.remove('used');
   }
-  document.querySelector('.btn-mega-hint').classList.remove('used');
+  document.querySelector('.btn-mega-hint').classList.remove('used', 'clicked');
 }
 
 function renderSafeClicks() {
@@ -379,6 +403,13 @@ function renderBestScores() {
   elBeginnerScore.innerText = beginnerScore + secondsStr;
   elMediumScore.innerText = mediumScore + secondsStr;
   elExpertScore.innerText = expertScore + secondsStr;
+}
+
+function showHintAlert(el) {
+  el.classList.add('alert');
+  setTimeout(() => {
+    el.classList.remove('alert');
+  }, 1500);
 }
 
 ////////////////////////////////////////////////////

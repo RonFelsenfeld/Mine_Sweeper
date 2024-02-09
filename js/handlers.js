@@ -45,7 +45,7 @@ function handleHintMode(location) {
       const elCell = document.querySelector(cellSelector);
       const cell = gBoard[i][j];
 
-      revealCell(elCell);
+      if (!cell.isMarked) revealCell(elCell);
 
       setTimeout(() => {
         if (!cell.isShown) elCell.classList.remove('revealed', 'mine');
@@ -101,4 +101,23 @@ function handleMegaHint() {
   const elMegaHintBtn = document.querySelector('.btn-mega-hint');
   elMegaHintBtn.classList.remove('clicked');
   elMegaHintBtn.classList.add('used');
+}
+
+function handleExterminator() {
+  const minesPos = getHiddenMinesPos();
+  const rndMinesPos = getRandomMinesPos(minesPos);
+
+  for (var i = 0; i < rndMinesPos.length; i++) {
+    const currMinePos = rndMinesPos[i];
+    const mineCell = gBoard[currMinePos.i][currMinePos.j];
+
+    // Update model (removing the mine)
+    mineCell.isMine = false;
+  }
+
+  // Update model (setting new neighbors count for each cell)
+  setMinesNegsCount(gBoard);
+
+  // Update dom
+  renderBoard(gBoard);
 }
