@@ -13,13 +13,20 @@
       href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="css/game.css" />
+    <link rel="stylesheet" href="css/help-modal.css" />
   </head>
 
   <body onload="onInit()">
-    <header>
+    <header class="header">
+      <button title="Help" class="btn-guide" onclick="onHelp()">
+        <img src="img/question.png" alt="question-mark" class="guide-img" />
+      </button>
+
       <h1 class="main-title">Mine Sweeper 💣</h1>
-      <button class="toggle-theme" onclick="onToggleTheme(this)">
+
+      <button class="btn-toggle-theme" onclick="onToggleTheme(this)">
         Light mode
       </button>
     </header>
@@ -156,6 +163,118 @@
         <div class="modal win-modal hide">
           <p class="modal-title">You won!</p>
           <button class="btn-reset" onClick="onRestart()">Play Again</button>
+        </div>
+
+        <div class="help-modal-container hide">
+          <header class="help-header">
+            <h1 class="help-title">Welcome!</h1>
+            <p class="welcome">
+              This is an improved version of the legendary game - Mine Sweeper!
+            </p>
+            <button class="btn-exit" onclick="onCloseHelpModal()">X</button>
+          </header>
+
+          <div class="game-description-container">
+            <div class="game-general-container">
+              <h2 class="secondary-title">This is how the game works:</h2>
+              <p>
+                There are 3 types of cells: Empty cells, Mine cells and Numbered
+                cells (The number inside indicates the number of neighboring
+                mines).
+              </p>
+
+              <p>
+                You're mission is to reveal all empty and numbered cells and
+                mark all the mines, as fast as you can. You can choose between 3
+                levels, each has it's own cells, mines and lives amounts.
+              </p>
+            </div>
+
+            <div class="game-controls">
+              <h2 class="secondary-title">Controls:</h2>
+
+              <p>Left click - reveal a cell</p>
+              <p>Right click - mark/unmark a cell with a flag ⛳️</p>
+            </div>
+          </div>
+
+          <h2 class="secondary-title">Extra Tools:</h2>
+
+          <div class="features-container">
+            <div class="feature">
+              <div class="manual-demo">Manual mode</div>
+
+              <p>
+                Click on that button will give you the option to place the mines
+                wherever you want. As soon as you place all mines, the timer
+                will start running. Pay attention to the mines left to place,
+                right from the manual mode button.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="undo-demo">Undo</div>
+              <p>
+                Click on the undo button will take the game one step back. Try
+                not to use it much, only losers need it.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="toggle-theme-demo">Light mode</div>
+              <p>Toggle between light and dark mode.</p>
+            </div>
+
+            <div class="feature">
+              <img
+                src="img/smiling-emoji.webp"
+                alt="smiling emoji"
+                class="emoji-demo"
+              />
+              <p>
+                Beside him changing his face based on your progress, click it if
+                you want to restart the game.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="exterminator-demo">Exterminator</div>
+              <p>
+                This a special tool that will remove 3 mines from the game. Use
+                it if you feel you don't have any safe moves. Available on
+                medium and expert levels only.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="mega-hint-demo">Mega Hint</div>
+              <p>
+                This is how it works: You have 2 clicks - The first one will be
+                the top-left corner and the second one will be the bottom-right.
+                After you click both, all cells within this range will be
+                revealed for 3 seconds. Use it with wise.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="safe-click-demo">Safe click</div>
+              <p>
+                You get 3 safe clicks per game. Click on the safe click button
+                will get you a totally safe cell to click (With no mine inside).
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="hint-theme-demo">
+                <img src="img/hint.png" alt="lamp img" class="hint-icon-demo" />
+              </div>
+              <p>
+                You get 3 hints per game. Click on a hint, and right after click
+                on a cell. The cell and it's neighbors will be revealed for 1
+                second.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </main>

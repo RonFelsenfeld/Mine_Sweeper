@@ -116,7 +116,9 @@ function onCellMarked(elCell, i, j, ev) {
     elCell.classList.remove('marked');
 
     // After unmark, need to retrieve the previous cell's content
-    const prevContent = cell.isMine ? MINE : cell.minesAroundCount;
+    var prevContent = cell.isMine ? MINE : cell.minesAroundCount;
+    // If the unmarked cell with not neighbors --> render empty cell and not 0
+    if (!prevContent) prevContent = '';
     renderCell({ i, j }, prevContent);
   }
 }
@@ -154,14 +156,16 @@ function onCellClicked(elCell, i, j) {
     if (!gGame.manualMode.minesLeft) {
       setMinesNegsCount(gBoard);
       renderBoard(gBoard);
+      gGame.isOn = true;
+      startTimer();
     }
     renderManualMode();
     return;
   }
 
   // If !isOn, that means this is the first click
-  // Set isOn = true; Finish build the board
-  if (!gGame.isOn) {
+  // We also check if it's not manual mode because if it's manual, it is possible to have a mine in the first click
+  if (!gGame.isOn && !gGame.manualMode.isOn) {
     processClick(cell);
     revealCell(elCell);
     handleFirstClick();
@@ -317,6 +321,20 @@ function onUndo() {
 
   const lastMoves = gGame.moves.pop();
   handleUndo(lastMoves);
+}
+
+function onHelp() {
+  const elModalOverlay = document.querySelector('.modal-overlay');
+  const elWinModal = document.querySelector('.help-modal-container');
+  elModalOverlay.classList.remove('hide');
+  elWinModal.classList.remove('hide');
+}
+
+function onCloseHelpModal() {
+  const elModalOverlay = document.querySelector('.modal-overlay');
+  const elWinModal = document.querySelector('.help-modal-container');
+  elModalOverlay.classList.add('hide');
+  elWinModal.classList.add('hide');
 }
 
 ////////////////////////////////////////////////////
@@ -507,6 +525,7 @@ function resetTimer() {
 function updateScoreInStorage() {
   const currLevelTitle = gLevels[gCurrLevelIdx].TITLE;
   const bestScore = localStorage.getItem(currLevelTitle);
+
   if (!bestScore) {
     localStorage.setItem(currLevelTitle, gGame.secsPassed);
   } else {

@@ -35,11 +35,14 @@ function renderBoard(board) {
       if (!cell.isMine) {
         className += `num-${cell.minesAroundCount}`;
         cellContent = cell.minesAroundCount ? cell.minesAroundCount : '';
+        // After the first click, the board will render again
+        // therefore, need to reveal the first click cells
+        className += cell.isShown ? ' revealed' : '';
+      } else {
+        className += cell.isShown ? ' mine' : '';
       }
 
-      // After the first click, the board will render again
-      // therefore, need to reveal the first click cells
-      className += cell.isShown ? ' revealed' : '';
+      if (cell.isMarked) cellContent = MARK;
 
       strHTML += `<td class="${className}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j}, event)">${cellContent}</td>`;
     }

@@ -38,28 +38,51 @@ body {
 
 /* ! Header */
 
-header {
-  text-align: center;
+.header {
+  display: grid;
+  grid-template-columns: 0.25fr 0.5fr 0.25fr;
+  place-items: center;
+  margin-inline: 30px;
+}
+
+.btn-guide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+
+  background-color: #eeeeee;
+  border-radius: 50%;
+  padding: 2px;
+
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-guide:hover {
+  background-color: #adadad;
+}
+
+.guide-img {
+  width: 32px;
+  height: 32px;
 }
 
 .main-title {
-  font-size: 60px;
+  font-size: 64px;
   text-transform: uppercase;
   margin: 10px 0;
   letter-spacing: 11px;
 }
 
-.toggle-theme {
-  position: absolute;
-  top: 2%;
-  right: 2%;
-
+.btn-toggle-theme {
   font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
   color: black;
   letter-spacing: -0.7px;
 
+  justify-self: end;
   border: 5px ridge black;
   background-color: white;
   padding: 12px 24px;
@@ -389,7 +412,7 @@ table {
 }
 
 .btn-exterminator {
-  color: rgb(233, 233, 233);
+  color: rgb(248, 248, 248);
   background: rgb(28, 26, 24);
   background: radial-gradient(
     circle,
@@ -404,7 +427,7 @@ table {
 }
 
 .btn-mega-hint {
-  color: rgb(233, 233, 233);
+  color: rgb(248, 248, 248);
   background: linear-gradient(
     90deg,
     rgba(255, 0, 0, 1) 0%,
