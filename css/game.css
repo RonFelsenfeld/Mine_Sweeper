@@ -79,7 +79,8 @@ header {
   margin-bottom: 5px;
 }
 
-.btn-manual-mode {
+.btn-manual-mode,
+.btn-undo {
   width: 64px;
   height: 64px;
   display: flex;
@@ -99,21 +100,41 @@ header {
 
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0px 0px 13px 1px rgba(176, 176, 176, 0.822);
+}
+
+.btn-manual-mode:hover,
+.btn-undo:hover {
+  box-shadow: 0px 0px 13px 1px rgba(254, 254, 254, 0.822);
+}
+
+.btn-manual-mode:active,
+.btn-undo:active {
+  transform: translateY(5px);
 }
 
 .btn-manual-mode {
-  box-shadow: 0px 0px 13px 1px rgba(77, 54, 54, 0.822);
   background-color: #160bb3;
 }
 
 .btn-manual-mode:hover {
-  box-shadow: 0px 0px 15px 1px rgba(55, 40, 40, 0.902);
   background-color: #685ef8;
 }
 
 .btn-manual-mode:active {
   background-color: #49467d;
-  transform: translateY(5px);
+}
+
+.btn-undo {
+  background-color: #e99133;
+}
+
+.btn-undo:hover {
+  background-color: rgb(187, 103, 43);
+}
+
+.btn-undo:active {
+  background-color: rgb(129, 69, 27);
 }
 
 .btn-level {
@@ -137,7 +158,7 @@ header {
 
 .btn-level:hover {
   background-color: rgb(197, 154, 97);
-  transform: translateX(6px);
+  transform: translateX(10px);
   box-shadow: none;
 }
 
@@ -164,7 +185,7 @@ header {
 }
 
 .timer-container {
-  width: 250px;
+  width: 280px;
 
   font-size: 36px;
   font-weight: 700;
@@ -410,7 +431,7 @@ table {
 }
 
 .btn-mega-hint + .click-description,
-.btn-exterminator + .click-description {
+.exterminator-container .click-description {
   font-size: 14px;
 }
 
@@ -586,6 +607,22 @@ table {
 
 /* ! Animations and others */
 
+.exterminator-msg::before {
+  position: absolute;
+  top: 10px;
+  left: 120px;
+  content: '3 Mines removed!';
+
+  font-size: 24px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transform: translateX(-50%);
+
+  background: linear-gradient(cyan, orange);
+  animation: fade-in 0.2s;
+  animation: hue 1s linear infinite;
+}
+
 .alert::before {
   content: 'Available after first click!';
   width: 100%;
@@ -611,5 +648,14 @@ table {
 @keyframes flash {
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes hue {
+  from {
+    filter: hue-rotate(0);
+  }
+  to {
+    filter: hue-rotate(360deg);
   }
 }

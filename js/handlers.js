@@ -19,6 +19,7 @@ function handleClickOnMine(elCell) {
 
 function handleVictory() {
   gGame.isOn = false;
+  gGame.isOver = true;
   setTimeout(showWinModal, 900);
   setTimeout(playSound, 900, WIN_SOUND);
   renderEmoji(WIN_EMOJI);
@@ -28,6 +29,7 @@ function handleVictory() {
 
 function handleLose() {
   gGame.isOn = false;
+  gGame.isOver = true;
   setTimeout(showLoseModal, 900);
   setTimeout(playSound, 900, LOSE_SOUND);
   renderEmoji(LOSE_EMOJI);
@@ -120,4 +122,31 @@ function handleExterminator() {
 
   // Update dom
   renderBoard(gBoard);
+}
+
+function handleUndo(moves) {
+  for (var i = 0; i < moves.length; i++) {
+    const currMove = moves[i];
+    const currCell = gBoard[currMove.i][currMove.j];
+    const cellSelector = getClassName(currMove);
+    const elCell = document.querySelector(cellSelector);
+
+    // Update model
+    currCell.isShown = false;
+
+    // Update
+    hideCell(elCell);
+
+    // If the last revealed cell was a mine --> update the lives
+    if (currCell.isMine) {
+      // Update model
+      gGame.lifeUsed--;
+
+      // Update dom
+      renderLives();
+    } else {
+      // Only if it's not a mine --> decrease showCount
+      gGame.showCount--;
+    }
+  }
 }

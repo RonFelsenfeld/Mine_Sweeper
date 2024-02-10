@@ -51,7 +51,6 @@ function onRestart() {
     hideLoseModal();
   }
 
-  initGameState();
   stopTimer();
   renderEmoji(NORMAL_EMOJI);
   onInit();
@@ -78,6 +77,10 @@ function initGameState() {
     pos2: {},
   };
   gGame.isUsedExterminator = false;
+  gGame.moves = [];
+
+  // Need to prevent clicks after the game is over (isOn works differently)
+  gGame.isOver = false;
 }
 
 ////////////////////////////////////////////////////
@@ -88,6 +91,7 @@ function onCellMarked(elCell, i, j, ev) {
   ev.preventDefault();
 
   if (!gGame.isOn) return;
+  if (gGame.isGameOver) return;
 
   const cell = gBoard[i][j];
   if (cell.isShown) return;
@@ -118,6 +122,8 @@ function onCellMarked(elCell, i, j, ev) {
 }
 
 function onCellClicked(elCell, i, j) {
+  if (gGame.isOver) return;
+
   const cell = gBoard[i][j];
   if (cell.isShown) return;
   if (cell.isMarked) return;
@@ -159,6 +165,7 @@ function onCellClicked(elCell, i, j) {
     processClick(cell);
     revealCell(elCell);
     handleFirstClick();
+    createNewMovesPortion();
 
     if (!cell.minesAroundCount) {
       // For the recursion to work, I need to undo the model update
@@ -166,6 +173,9 @@ function onCellClicked(elCell, i, j) {
       cell.isShown = false;
       gGame.showCount--;
       expandShown({ i, j });
+    } else {
+      // For the undo btn --> storing all moves in a moves array
+      storeInMoves(i, j);
     }
 
     return;
@@ -180,7 +190,12 @@ function onCellClicked(elCell, i, j) {
 
   if (!cell.minesAroundCount && !cell.isMine) {
     // If the cell is empty --> shows his negs
+    createNewMovesPortion();
     expandShown({ i, j });
+
+    if (checkForVictory()) {
+      handleVictory();
+    }
     return;
   }
 
@@ -195,6 +210,8 @@ function onCellClicked(elCell, i, j) {
 
   // Update model
   processClick(cell);
+  createNewMovesPortion();
+  storeInMoves(i, j);
 
   // Update dom
   revealCell(elCell);
@@ -274,17 +291,32 @@ function onToggleTheme(elBtn) {
 }
 
 function onExterminator(elBtn) {
+  if (gGame.isUsedExterminator) return;
+  // If on beginner level --> don't allow (exterminator removes 3 mines)
+  if (gCurrLevelIdx === 0) return;
   if (!gGame.isOn) {
     showHintAlert(elBtn);
     return;
   }
-  if (gGame.isUsedExterminator) return;
-  // If on beginner level --> don't allow (exterminator removes 3 mines)
-  if (gCurrLevelIdx === 0) return;
 
   gGame.isUsedExterminator = true;
   elBtn.classList.add('used');
+
+  const elHeader = document.querySelector('header');
+  elHeader.classList.add('exterminator-msg');
+
+  setTimeout(() => {
+    elHeader.classList.remove('exterminator-msg');
+  }, 2500);
   handleExterminator();
+}
+
+function onUndo() {
+  if (gGame.moves.length === 0) return;
+  if (!gGame.isOn) return;
+
+  const lastMoves = gGame.moves.pop();
+  handleUndo(lastMoves);
 }
 
 ////////////////////////////////////////////////////
@@ -333,6 +365,14 @@ function revealCell(elCell) {
     elCell.classList.add('mine');
   } else {
     elCell.classList.add('revealed');
+  }
+}
+
+function hideCell(elCell) {
+  if (elCell.innerText === MINE) {
+    elCell.classList.remove('mine');
+  } else {
+    elCell.classList.remove('revealed');
   }
 }
 
@@ -429,6 +469,16 @@ function processMark(cell) {
 function processUnmark(cell) {
   cell.isMarked = false;
   gGame.markedCount--;
+}
+
+// Storing the moves in the gGame moves array
+function storeInMoves(i, j) {
+  gGame.moves[gGame.moves.length - 1].push({ i, j });
+}
+
+// Creating new array for the next moves (for the undo)
+function createNewMovesPortion() {
+  gGame.moves.push([]);
 }
 
 ////////////////////////////////////////////////////

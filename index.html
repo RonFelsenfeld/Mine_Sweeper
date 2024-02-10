@@ -30,6 +30,8 @@
           <button class="btn-manual-mode" onclick="onManualMode(this)">
             Manual mode
           </button>
+
+          <button class="btn-undo" onclick="onUndo()">Undo</button>
         </div>
 
         <div class="levels-container">
@@ -76,7 +78,9 @@
 
       <div class="game-background">
         <div class="game-container">
-          <p class="timer-container">Time: <span class="seconds">00</span></p>
+          <p class="timer-container">
+            ⏳ Time: <span class="seconds">00</span>
+          </p>
 
           <div class="table-container">
             <table>
@@ -121,6 +125,7 @@
             Exterminator
           </button>
           <p class="click-description">Only 1 use per game!</p>
+          <p class="click-description">(not available in beginner level)</p>
         </div>
 
         <div class="mega-hint-container">

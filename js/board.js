@@ -76,6 +76,7 @@ function expandShown(location) {
   if (!cell.isMine && !cell.isShown && !cell.isMarked) {
     // Update model
     processClick(cell);
+    storeInMoves(rowIdx, colIdx);
 
     // Update dom
     const cellSelector = getClassName({ i: rowIdx, j: colIdx });
@@ -231,19 +232,3 @@ function getRandomMinesPos(minesPos) {
 
   return rndMinesPos;
 }
-
-// // Check if a given cell has shown neighbors (for exterminator)
-// function hasShownNeighbor(rowIdx, colIdx) {
-//   for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
-//     if (i < 0 || i >= gBoard.length) continue;
-
-//     for (var j = colIdx - 1; j <= colIdx + 1; j++) {
-//       if (j < 0 || j >= gBoard[0].length) continue;
-//       if (i === rowIdx && j === colIdx) continue;
-
-//       if (gBoard[i][j].isShown) return true;
-//     }
-//   }
-
-//   return false;
-// }
