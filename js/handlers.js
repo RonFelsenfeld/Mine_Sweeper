@@ -108,6 +108,7 @@ function handleMegaHint() {
 function handleExterminator() {
   const minesPos = getHiddenMinesPos();
   const rndMinesPos = getRandomMinesPos(minesPos);
+  // Could also check if there are not enough hidden mines (under 3)
 
   for (var i = 0; i < rndMinesPos.length; i++) {
     const currMinePos = rndMinesPos[i];

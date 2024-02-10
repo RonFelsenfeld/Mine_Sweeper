@@ -42,9 +42,13 @@ function renderBoard(board) {
         className += cell.isShown ? ' mine' : '';
       }
 
-      if (cell.isMarked) cellContent = MARK;
+      if (cell.isMarked) {
+        cellContent = MARK;
+        className += ' marked';
+      }
 
-      strHTML += `<td class="${className}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j}, event)">${cellContent}</td>`;
+      strHTML += `<td class="${className}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j}, event)">
+      ${cell.isMarked ? MARK : cellContent}</td>`;
     }
 
     strHTML += '</tr>';
@@ -207,7 +211,8 @@ function getHiddenMinesPos() {
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard[0].length; j++) {
       const cell = gBoard[i][j];
-      if (cell.isMine && !cell.isShown) minesPos.push({ i, j });
+      if (cell.isMine && !cell.isShown && !cell.isMarked)
+        minesPos.push({ i, j });
     }
   }
 
