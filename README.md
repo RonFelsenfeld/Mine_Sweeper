@@ -1,6 +1,6 @@
 # Mine Sweeper 💣
 
-## Mine Sweeper Description
+## Description
 
 A modern take on the classic Minesweeper puzzle game! Uncover tiles, avoid hidden mines, and strategically flag potential danger zones to clear the board. The game includes intuitive controls, dynamic gameplay, and a user-friendly interface designed for players of all skill levels. Perfect for quick logic challenges or mastering your puzzle-solving skills!
 
